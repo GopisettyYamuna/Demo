@@ -1,27 +1,41 @@
 package com.hackerrank.api.exception;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.hackerrank.api.model.Vulnerability;
+@RestControllerAdvice
 
-@ControllerAdvice
-@ResponseStatus
-public class GlobalException extends ResponseEntityExceptionHandler{
+public class GlobalException {
 	
 	@ExceptionHandler(value = ElementNotFoundException.class)
-	public ResponseEntity<Vulnerability> handleElementNotFoundException(ElementNotFoundException ex,WebRequest request){
-		Vulnerability vr = new Vulnerability();
-		ex.getMessage();
-		return new  ResponseEntity<Vulnerability>(vr,HttpStatus.NOT_FOUND);
+
+	public ResponseEntity<?> handleElementNotFoundException(ElementNotFoundException ex,WebRequest request){
+		
+		String message = ex.getMessage();
+		if(message == null) message=ex.toString();
+		 ApiException vr =  new ApiException(message,HttpStatus.NOT_FOUND);
+		
+		return new  ResponseEntity<>(vr,new HttpHeaders(),HttpStatus.NOT_FOUND);
 	}
 	
-	
+	@ExceptionHandler(value = BadRequestException.class)
+
+	public ResponseEntity<?> handleBadRequestException(BadRequestException ex,WebRequest request){
+		
+		String message = ex.getMessage();
+		if(message == null) message=ex.toString();
+		 ApiException vr =  new ApiException(message,HttpStatus.NOT_FOUND);
+		
+		return new  ResponseEntity<>(vr,new HttpHeaders(),HttpStatus.NOT_FOUND);
+	}
 	
 	
 
